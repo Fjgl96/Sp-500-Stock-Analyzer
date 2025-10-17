@@ -31,7 +31,7 @@ class TechnicalAnalysis:
             DataFrame con columnas SMA
         """
         if periods is None:
-            periods = INDICATORS_CONFIG["sma_periods"]
+            periods = INDICATORS_CONFIG["sma"]["periods"]  # ✅ CORREGIDO
         
         for period in periods:
             self.df[f'SMA_{period}'] = self.df['Close'].rolling(window=period).mean()
@@ -49,7 +49,7 @@ class TechnicalAnalysis:
             DataFrame con columnas EMA
         """
         if periods is None:
-            periods = INDICATORS_CONFIG["ema_periods"]
+            periods = INDICATORS_CONFIG["ema"]["periods"]  # ✅ CORREGIDO
         
         for period in periods:
             self.df[f'EMA_{period}'] = self.df['Close'].ewm(span=period, adjust=False).mean()
@@ -67,7 +67,7 @@ class TechnicalAnalysis:
             DataFrame con columna RSI
         """
         if period is None:
-            period = INDICATORS_CONFIG["rsi_period"]
+            period = INDICATORS_CONFIG["rsi"]["period"]  # ✅ CORREGIDO
         
         delta = self.df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
@@ -96,11 +96,11 @@ class TechnicalAnalysis:
             DataFrame con columnas MACD
         """
         if fast is None:
-            fast = INDICATORS_CONFIG["macd_fast"]
+            fast = INDICATORS_CONFIG["macd"]["fast"]  # ✅ CORREGIDO
         if slow is None:
-            slow = INDICATORS_CONFIG["macd_slow"]
+            slow = INDICATORS_CONFIG["macd"]["slow"]  # ✅ CORREGIDO
         if signal is None:
-            signal = INDICATORS_CONFIG["macd_signal"]
+            signal = INDICATORS_CONFIG["macd"]["signal"]  # ✅ CORREGIDO
         
         ema_fast = self.df['Close'].ewm(span=fast, adjust=False).mean()
         ema_slow = self.df['Close'].ewm(span=slow, adjust=False).mean()
@@ -127,9 +127,9 @@ class TechnicalAnalysis:
             DataFrame con columnas de Bollinger
         """
         if period is None:
-            period = INDICATORS_CONFIG["bollinger_period"]
+            period = INDICATORS_CONFIG["bollinger_bands"]["period"]  # ✅ CORREGIDO
         if std_dev is None:
-            std_dev = INDICATORS_CONFIG["bollinger_std"]
+            std_dev = INDICATORS_CONFIG["bollinger_bands"]["std_dev"]  # ✅ CORREGIDO
         
         self.df['BB_Middle'] = self.df['Close'].rolling(window=period).mean()
         std = self.df['Close'].rolling(window=period).std()
@@ -189,32 +189,44 @@ class TechnicalAnalysis:
         signals = {}
         
         # Señal RSI
-        last_rsi = self.df['RSI'].iloc[-1]
-        if last_rsi < 30:
-            signals['RSI'] = '🟢 SOBREVENDIDO - Señal de COMPRA'
-        elif last_rsi > 70:
-            signals['RSI'] = '🔴 SOBRECOMPRADO - Señal de VENTA'
-        else:
-            signals['RSI'] = '🟡 NEUTRAL'
+        if 'RSI' in self.df.columns:
+            last_rsi = self.df['RSI'].iloc[-1]
+            if pd.notna(last_rsi):  # ✅ Verifica que no sea NaN
+                if last_rsi < 30:
+                    signals['RSI'] = '🟢 SOBREVENDIDO - Señal de COMPRA'
+                elif last_rsi > 70:
+                    signals['RSI'] = '🔴 SOBRECOMPRADO - Señal de VENTA'
+                else:
+                    signals['RSI'] = '🟡 NEUTRAL'
+            else:
+                signals['RSI'] = '⚪ Sin datos suficientes'
         
         # Señal MACD
-        last_macd = self.df['MACD'].iloc[-1]
-        last_signal = self.df['MACD_Signal'].iloc[-1]
-        if last_macd > last_signal:
-            signals['MACD'] = '🟢 ALCISTA - Señal de COMPRA'
-        else:
-            signals['MACD'] = '🔴 BAJISTA - Señal de VENTA'
+        if 'MACD' in self.df.columns and 'MACD_Signal' in self.df.columns:
+            last_macd = self.df['MACD'].iloc[-1]
+            last_signal = self.df['MACD_Signal'].iloc[-1]
+            if pd.notna(last_macd) and pd.notna(last_signal):  # ✅ Verifica que no sea NaN
+                if last_macd > last_signal:
+                    signals['MACD'] = '🟢 ALCISTA - Señal de COMPRA'
+                else:
+                    signals['MACD'] = '🔴 BAJISTA - Señal de VENTA'
+            else:
+                signals['MACD'] = '⚪ Sin datos suficientes'
         
         # Señal Moving Averages
-        last_close = self.df['Close'].iloc[-1]
-        last_sma_50 = self.df['SMA_50'].iloc[-1]
-        last_sma_200 = self.df['SMA_200'].iloc[-1]
-        
-        if last_close > last_sma_50 and last_sma_50 > last_sma_200:
-            signals['MA_Trend'] = '🟢 TENDENCIA ALCISTA FUERTE'
-        elif last_close < last_sma_50 and last_sma_50 < last_sma_200:
-            signals['MA_Trend'] = '🔴 TENDENCIA BAJISTA FUERTE'
-        else:
-            signals['MA_Trend'] = '🟡 TENDENCIA MIXTA'
+        if 'SMA_50' in self.df.columns and 'SMA_200' in self.df.columns:
+            last_close = self.df['Close'].iloc[-1]
+            last_sma_50 = self.df['SMA_50'].iloc[-1]
+            last_sma_200 = self.df['SMA_200'].iloc[-1]
+            
+            if pd.notna(last_sma_50) and pd.notna(last_sma_200):  # ✅ Verifica que no sea NaN
+                if last_close > last_sma_50 and last_sma_50 > last_sma_200:
+                    signals['MA_Trend'] = '🟢 TENDENCIA ALCISTA FUERTE'
+                elif last_close < last_sma_50 and last_sma_50 < last_sma_200:
+                    signals['MA_Trend'] = '🔴 TENDENCIA BAJISTA FUERTE'
+                else:
+                    signals['MA_Trend'] = '🟡 TENDENCIA MIXTA'
+            else:
+                signals['MA_Trend'] = '⚪ Sin datos suficientes'
         
         return signals
