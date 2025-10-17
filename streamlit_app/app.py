@@ -11,6 +11,7 @@ root_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(root_dir))
 
 from src.utils.config import APP_CONFIG
+from src.utils.data_fetcher import get_stock_data, get_multiple_stocks
 
 # Configuración de la página
 st.set_page_config(**APP_CONFIG)
@@ -88,6 +89,21 @@ def main():
         """)
     
     st.markdown("---")
+    
+    # Demo de carga de datos
+    with st.expander("🧪 Prueba de Conexión con Yahoo Finance"):
+        st.write("Verifica que la conexión funcione correctamente:")
+        
+        if st.button("🔄 Probar carga de datos"):
+            with st.spinner("Probando conexión..."):
+                # Intenta cargar AAPL
+                data = get_stock_data("AAPL", period="5d")
+                
+                if data is not None and not data.empty:
+                    st.success("✅ Conexión exitosa!")
+                    st.dataframe(data.tail(), use_container_width=True)
+                else:
+                    st.error("❌ Error al conectar. Intenta de nuevo en unos segundos.")
     
     # Información adicional
     with st.expander("ℹ️ Acerca de esta aplicación"):

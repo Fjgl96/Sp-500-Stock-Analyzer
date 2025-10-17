@@ -1,54 +1,46 @@
 """
-Configuraciones globales del proyecto
+Configuración de la aplicación
 """
 
-import os
-from pathlib import Path
+import streamlit as st
 
-# Paths del proyecto
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DATA_DIR = BASE_DIR / "data"
-RAW_DATA_DIR = DATA_DIR / "raw"
-PROCESSED_DATA_DIR = DATA_DIR / "processed"
-CACHE_DIR = DATA_DIR / "cache"
-
-# Crear directorios si no existen
-for directory in [RAW_DATA_DIR, PROCESSED_DATA_DIR, CACHE_DIR]:
-    directory.mkdir(parents=True, exist_ok=True)
-
-# Configuración de la aplicación
+# Configuración de la página
 APP_CONFIG = {
-    "page_title": "S&P 500 Stock Analyzer",  # ← Cambiar 'title' por 'page_title'
-    "page_icon": "📈",
+    "page_title": "S&P 500 Stock Analyzer",
+    "page_icon": "📊",
     "layout": "wide",
     "initial_sidebar_state": "expanded"
 }
 
-# Configuración de datos
-DATA_CONFIG = {
-    "default_period": "1y",
-    "default_interval": "1d",
-    "cache_expiry_hours": 24
+# Configuración de yfinance
+import yfinance as yf
+import requests
+
+# Configura sesión con headers personalizados
+session = requests.Session()
+session.headers.update({
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate',
+    'Connection': 'keep-alive',
+})
+
+# Aplica la sesión a yfinance
+yf.pdr_override()
+
+# Índices principales
+MAJOR_INDICES = {
+    "S&P 500": "^GSPC",
+    "Dow Jones": "^DJI",
+    "NASDAQ": "^IXIC",
+    "Russell 2000": "^RUT"
 }
 
-# Colores para gráficos
-CHART_COLORS = {
-    "primary": "#1f77b4",
-    "secondary": "#ff7f0e",
-    "success": "#2ca02c",
-    "danger": "#d62728",
-    "warning": "#ff9800",
-    "info": "#17a2b8"
-}
-
-# Indicadores técnicos - Configuración por defecto
-INDICATORS_CONFIG = {
-    "sma_periods": [20, 50, 200],
-    "ema_periods": [12, 26],
-    "rsi_period": 14,
-    "macd_fast": 12,
-    "macd_slow": 26,
-    "macd_signal": 9,
-    "bollinger_period": 20,
-    "bollinger_std": 2
-}
+# Lista de acciones populares del S&P 500
+SP500_STOCKS = [
+    "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "BRK.B",
+    "V", "JNJ", "WMT", "JPM", "MA", "PG", "UNH", "HD", "DIS", "BAC",
+    "ADBE", "CRM", "NFLX", "CMCSA", "XOM", "KO", "PEP", "CSCO", "AVGO",
+    "INTC", "VZ", "NKE", "TMO", "ABT", "CVX", "MRK", "ACN", "COST", "DHR"
+]
