@@ -58,13 +58,17 @@ class StockDataFetcher:
                     
             except Exception as e:
                 if attempt == self.max_retries - 1:
-                    if st._is_running_with_streamlit:
+                    try:
                         st.error(f"❌ Error al cargar {ticker}: {str(e)}")
+                    except:
+                        pass
                     return None
                 continue
         
-        if st._is_running_with_streamlit:
+        try:
             st.warning(f"⚠️ No se pudieron obtener datos para {ticker}")
+        except:
+            pass
         return None
     
     def get_multiple_stocks(
@@ -87,17 +91,23 @@ class StockDataFetcher:
         data_dict = {}
         total = len(tickers)
         
-        # Progress bar si está en Streamlit
-        if st._is_running_with_streamlit:
+        # Progress bar (intenta mostrar, si falla continúa sin progress)
+        try:
             progress_bar = st.progress(0)
             status_text = st.empty()
+            show_progress = True
+        except:
+            show_progress = False
         
         for i, ticker in enumerate(tickers):
             # Actualiza progreso
-            if st._is_running_with_streamlit:
-                progress = (i + 1) / total
-                progress_bar.progress(progress)
-                status_text.text(f"Cargando {ticker}... ({i+1}/{total})")
+            if show_progress:
+                try:
+                    progress = (i + 1) / total
+                    progress_bar.progress(progress)
+                    status_text.text(f"Cargando {ticker}... ({i+1}/{total})")
+                except:
+                    pass
             
             # Delay entre requests
             if i > 0:
@@ -109,9 +119,12 @@ class StockDataFetcher:
                 data_dict[ticker] = df
         
         # Limpia UI
-        if st._is_running_with_streamlit:
-            progress_bar.empty()
-            status_text.empty()
+        if show_progress:
+            try:
+                progress_bar.empty()
+                status_text.empty()
+            except:
+                pass
         
         return data_dict
     
@@ -150,8 +163,10 @@ class StockDataFetcher:
                     
             except Exception as e:
                 if attempt == 2:
-                    if st._is_running_with_streamlit:
+                    try:
                         st.warning(f"⚠️ No se pudo obtener información de {ticker}")
+                    except:
+                        pass
                     return {}
                 continue
         
@@ -165,7 +180,6 @@ class StockDataFetcher:
             Lista de símbolos del S&P 500
         """
         # Lista hardcodeada de tickers populares del S&P 500
-        # En producción, podrías obtenerla de Wikipedia o una API
         tickers = [
             'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'BRK.B',
             'V', 'JNJ', 'WMT', 'JPM', 'MA', 'PG', 'UNH', 'HD', 'DIS', 'BAC',
