@@ -12,11 +12,11 @@ APP_CONFIG = {
     "initial_sidebar_state": "expanded"
 }
 
-# Configuración de yfinance
+# Configuración de yfinance con headers personalizados
 import yfinance as yf
 import requests
 
-# Configura sesión con headers personalizados
+# Configura sesión con headers personalizados para evitar bloqueos
 session = requests.Session()
 session.headers.update({
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -25,9 +25,6 @@ session.headers.update({
     'Accept-Encoding': 'gzip, deflate',
     'Connection': 'keep-alive',
 })
-
-# Aplica la sesión a yfinance
-yf.pdr_override()
 
 # Índices principales
 MAJOR_INDICES = {
@@ -42,5 +39,11 @@ SP500_STOCKS = [
     "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "BRK.B",
     "V", "JNJ", "WMT", "JPM", "MA", "PG", "UNH", "HD", "DIS", "BAC",
     "ADBE", "CRM", "NFLX", "CMCSA", "XOM", "KO", "PEP", "CSCO", "AVGO",
-    "INTC", "VZ", "NKE", "TMO", "ABT", "CVX", "MRK", "ACN", "COST", "DHR"
+    "INTC", "VZ", "NKE", "TMO", "ABT", "CVX", "MRK", "ACN", "COST", "DHR",
+    "LLY", "MDT", "ORCL", "TXN", "NEE", "PM", "HON", "UNP", "RTX", "LOW",
+    "QCOM", "BMY", "SBUX", "IBM", "INTU", "AMD", "AMGN", "CAT", "GE",
+    "BA", "MMM", "GS", "BKNG", "BLK", "AXP", "DE", "LMT", "SPGI", "SYK",
+    "GILD", "ADP", "MO", "TGT", "MDLZ", "CI", "CVS", "ISRG", "ZTS", "USB",
+    "PLD", "C", "DUK", "SO", "MMC", "TJX", "BDX", "CB", "EOG", "CL",
+    "NSC", "ITW", "BSX", "HCA", "EQIX", "SHW", "PNC", "CME", "SCHW"
 ]
