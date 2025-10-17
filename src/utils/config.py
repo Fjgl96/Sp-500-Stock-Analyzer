@@ -47,3 +47,106 @@ SP500_STOCKS = [
     "PLD", "C", "DUK", "SO", "MMC", "TJX", "BDX", "CB", "EOG", "CL",
     "NSC", "ITW", "BSX", "HCA", "EQIX", "SHW", "PNC", "CME", "SCHW"
 ]
+
+# Colores para gráficos
+CHART_COLORS = {
+    'primary': '#1f77b4',
+    'secondary': '#ff7f0e',
+    'success': '#2ca02c',
+    'danger': '#d62728',
+    'warning': '#ff9800',
+    'info': '#17a2b8',
+    'bullish': '#26a69a',
+    'bearish': '#ef5350',
+    'volume': '#78909c',
+    'ma_short': '#ff6b6b',
+    'ma_long': '#4ecdc4',
+    'rsi_oversold': '#26a69a',
+    'rsi_overbought': '#ef5350',
+    'macd': '#2196f3',
+    'signal': '#ff9800',
+    'bb_upper': '#9e9e9e',
+    'bb_middle': '#607d8b',
+    'bb_lower': '#9e9e9e'
+}
+
+# Configuración de indicadores técnicos
+INDICATORS_CONFIG = {
+    'sma': {
+        'periods': [20, 50, 200],
+        'default_period': 50
+    },
+    'ema': {
+        'periods': [12, 26, 50],
+        'default_period': 20
+    },
+    'rsi': {
+        'period': 14,
+        'overbought': 70,
+        'oversold': 30
+    },
+    'macd': {
+        'fast': 12,
+        'slow': 26,
+        'signal': 9
+    },
+    'bollinger_bands': {
+        'period': 20,
+        'std_dev': 2
+    },
+    'stochastic': {
+        'k_period': 14,
+        'd_period': 3,
+        'overbought': 80,
+        'oversold': 20
+    },
+    'atr': {
+        'period': 14
+    }
+}
+
+# Períodos de tiempo disponibles
+TIME_PERIODS = {
+    '1 Día': '1d',
+    '5 Días': '5d',
+    '1 Mes': '1mo',
+    '3 Meses': '3mo',
+    '6 Meses': '6mo',
+    '1 Año': '1y',
+    '2 Años': '2y',
+    '5 Años': '5y',
+    '10 Años': '10y',
+    'Año hasta la fecha': 'ytd',
+    'Máximo': 'max'
+}
+
+# Intervalos disponibles
+TIME_INTERVALS = {
+    '1 Minuto': '1m',
+    '2 Minutos': '2m',
+    '5 Minutos': '5m',
+    '15 Minutos': '15m',
+    '30 Minutos': '30m',
+    '1 Hora': '1h',
+    '1 Día': '1d',
+    '5 Días': '5d',
+    '1 Semana': '1wk',
+    '1 Mes': '1mo',
+    '3 Meses': '3mo'
+}
+
+# Configuración de cache
+CACHE_CONFIG = {
+    'stock_data_ttl': 3600,  # 1 hora
+    'market_data_ttl': 1800,  # 30 minutos
+    'stock_info_ttl': 7200,   # 2 horas
+    'sp500_list_ttl': 86400   # 24 horas
+}
+
+# Configuración de la aplicación
+APP_SETTINGS = {
+    'max_stocks_comparison': 10,
+    'default_chart_height': 600,
+    'enable_animations': True,
+    'theme': 'plotly_white'
+}
